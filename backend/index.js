@@ -30,8 +30,8 @@ app.listen(process.env.port, async (req, res) => {
         console.log("DB is connected")
     }
     catch (error) {
-        console.log("DB is not connected", error)
+        console.log("Error connecting to DB", error)
     }
-    console.log(`Listening at Port ${process.env.port}`)
+    console.log(`Server listening at Port ${process.env.port}`)
 })
 

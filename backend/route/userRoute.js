@@ -12,10 +12,10 @@ const { UserModel } = require("../model/UserModel");
 
 // to register user and then hashing password using Bcrypt
 userRoute.post("/register", async (req, res) => {
-    const { name, email, password } = req.body
-    const userFound = await UserModel.findOne({ email })
+    const { name, email, password } = req.body;
+    const userFound = await UserModel.findOne({ email });
     if (userFound) {
-        res.status(409)({ "message": "Already User registered" })
+        res.status(409)({ "message": "Already User registered" });
     }
     else {
         try {
@@ -23,22 +23,22 @@ userRoute.post("/register", async (req, res) => {
 
             bcrypt.hash(password, 5, async function (err, hash) {
                 const data = new UserModel({ name, email, password: hash, registeredDate: dateFormat })
-                await data.save()
+                await data.save();
                 res.status(201).send({ "message": "User registered" })
             });
         }
         catch (err) {
-            res.status(500)({ "ERROR": err })
+            res.status(500)({ "ERROR": err });
         }
     }
 })
 
 // to let user login and then storing token
 userRoute.post("/login", async (req, res) => {
-    const { email, password } = req.body
-    let data = await UserModel.findOne({ email })
+    const { email, password } = req.body;
+    let data = await UserModel.findOne({ email });
     if (!data) {
-        return res.send({ "message": "No User Found" })
+        return res.send({ "message": "No User Found" });
     }
     try {
         bcrypt.compare(password, data.password, function (err, result) {
@@ -48,25 +48,25 @@ userRoute.post("/login", async (req, res) => {
                 res.status(201).send({ "message": "Validation done", "token": token, "refresh": refreshtoken })
             }
             else {
-                res.status(401).send({ "message": "INVALID credentials" })
+                res.status(401).send({ "message": "INVALID credentials" });
             }
         });
     }
     catch (err) {
-        res.status(500)({ "ERROR": err })
+        res.status(500)({ "ERROR": err });
     }
 })
 
 // implementing logout using json file 
 userRoute.post("/logout", async (req, res) => {
-    const token = req.headers.authorization
+    const token = req.headers.authorization;
     if (token) {
         // <------------ REDIS usage
-        await client.sadd("keyname", token)
-        res.send("Logout done successfully")
+        await client.sadd("keyname", token);
+        res.send({ "message": "Logout done successfully" });
     }
     else {
-        res.send("Please login")
+        res.send({ "message": "Please login" });
     }
 })
 

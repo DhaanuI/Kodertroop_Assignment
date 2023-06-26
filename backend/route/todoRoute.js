@@ -1,30 +1,33 @@
-const express = require("express")
-const todoRoute = express.Router()
-todoRoute.use(express.json())
+const express = require("express");
+const todoRoute = express.Router();
+todoRoute.use(express.json());
 
-const { TodoModel } = require("../model/todomodel")
+const { TodoModel } = require("../model/todomodel");
+const { authenticate } = require("../middleware/authenticate.middleware");
+
+todoRoute.use(authenticate);
+
 
 todoRoute.get("/", async (req, res) => {
-
     try {
-        const data = await TodoModel.find({ userID: req.body.userID })
-        res.status(200).send({ "Todos": data })
+        const data = await TodoModel.find({ userID: req.body.userID });
+        res.status(200).send({ "Todos": data });
     }
     catch (err) {
-        res.status(404).send({ "error": err })
+        res.status(404).send({ "error": err });
     }
 })
 
 todoRoute.post("/add", async (req, res) => {
-    const { name, priority } = req.body
+    const { name, priority } = req.body;
     try {
-        const data = new TodoModel({ name, priority, userID: req.body.userID })
-        await data.save()
+        const data = new TodoModel({ name, priority, userID: req.body.userID });
+        await data.save();
 
-        res.send({ "message": "Todo added" })
+        res.send({ "message": "Todo added" });
     }
     catch (err) {
-        res.status(404).send({ "error": err })
+        res.status(404).send({ "error": err });
     }
 })
 
@@ -40,12 +43,12 @@ todoRoute.patch("/update/:id", async (req, res) => {
             res.status(401).send({ "message": "Oops, You're NOT Authorized" });
         }
         else {
-            await TodoModel.findByIdAndUpdate({ _id: ID }, payload)
-            res.send({ "message": "Info modified in Database" })
+            await TodoModel.findByIdAndUpdate({ _id: ID }, payload);
+            res.send({ "message": "Info modified in Database" });
         }
     }
     catch (err) {
-        res.status(404).send({ "message": "Bad request 404" })
+        res.status(404).send({ "message": "Bad request 404" });
     }
 })
 
