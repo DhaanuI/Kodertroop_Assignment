@@ -43,8 +43,8 @@ userRoute.post("/login", async (req, res) => {
     try {
         bcrypt.compare(password, data.password, function (err, result) {
             if (result) {
-                var token = jwt.sign({ userID: data._id }, process.env.key, { expiresIn: 60 * 30 });
-                var refreshtoken = jwt.sign({ userID: data._id }, process.env.key, { expiresIn: 60 * 90 });
+                var token = jwt.sign({ userID: data._id }, process.env.key);
+                var refreshtoken = jwt.sign({ userID: data._id }, process.env.key, { expiresIn: 60 * 1000 });
                 res.status(201).send({ "message": "Validation done", "token": token, "refresh": refreshtoken })
             }
             else {
