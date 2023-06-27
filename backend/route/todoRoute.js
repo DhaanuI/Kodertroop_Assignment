@@ -5,8 +5,9 @@ todoRoute.use(express.json());
 const { TodoModel } = require("../model/todomodel");
 const { authenticate } = require("../middleware/authenticate.middleware");
 
-todoRoute.use(authenticate);
+//todoRoute.use(authenticate);
 
+const { redisClient, elasticSearchClient } = require("../config/db")
 
 todoRoute.get("/", async (req, res) => {
     try {
@@ -19,9 +20,14 @@ todoRoute.get("/", async (req, res) => {
 })
 
 todoRoute.post("/add", async (req, res) => {
-    const { name, priority } = req.body;
     try {
-        const data = new TodoModel({ name, priority, userID: req.body.userID });
+        const data = new TodoModel({
+            title: req.body.title,
+            priority: req.body.priority,
+            description: req.body.description == undefined ? undefined : req.body.description,
+            userID: req.body.userID,
+            status: req.body.status
+        });
         await data.save();
 
         res.send({ "message": "Todo added" });
@@ -29,6 +35,17 @@ todoRoute.post("/add", async (req, res) => {
     catch (err) {
         res.status(404).send({ "error": err });
     }
+
+    const result = await elasticClient.index({
+        index: "posts",
+        document: {
+            title: req.body.title,
+            author: req.body.author,
+            content: req.body.content,
+        },
+    });
+
+    res.send(result);
 })
 
 todoRoute.patch("/update/:id", async (req, res) => {
@@ -44,7 +61,7 @@ todoRoute.patch("/update/:id", async (req, res) => {
         }
         else {
             await TodoModel.findByIdAndUpdate({ _id: ID }, payload);
-            res.send({ "message": "Info modified in Database" });
+            res.send({ "message": "Todo modified in Database" });
         }
     }
     catch (err) {
@@ -52,7 +69,7 @@ todoRoute.patch("/update/:id", async (req, res) => {
     }
 })
 
-todoRoute.delete("/:id", async (req, res) => {
+todoRoute.delete("/delete/:id", async (req, res) => {
     const ID = req.params.id;
     const data = await TodoModel.findOne({ _id: ID });
     const userid_in_req = req.body.userID;
@@ -64,7 +81,7 @@ todoRoute.delete("/:id", async (req, res) => {
         }
         else {
             await TodoModel.findByIdAndDelete({ _id: ID })
-            res.send({ "message": "Particular data has been deleted" })
+            res.send({ "message": "Todo has been deleted" })
         }
     }
     catch (err) {

@@ -5,7 +5,7 @@ const userRoute = express.Router();
 userRoute.use(express.json());
 const moment = require("moment");
 
-const { client } = require("../config/db")
+const { redisClient } = require("../config/db")
 require("dotenv").config();
 
 const { UserModel } = require("../model/UserModel");
@@ -62,7 +62,7 @@ userRoute.post("/logout", async (req, res) => {
     const token = req.headers.authorization;
     if (token) {
         // <------------ REDIS usage
-        await client.sadd("keyname", token);
+        await redisClient.sadd("keyname", token);
         res.send({ "message": "Logout done successfully" });
     }
     else {
