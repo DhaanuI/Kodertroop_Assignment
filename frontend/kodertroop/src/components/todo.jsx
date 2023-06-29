@@ -46,8 +46,9 @@ const Todo = ({ isLoggedIn }) => {
                 console.error('Error fetching search results:', error);
             }
         };
-
-        fetchSearchResults();
+        if (isLoggedIn) {
+            fetchSearchResults();
+        }
     }, [searchQuery]);
 
     async function fetchData() {
@@ -71,19 +72,6 @@ const Todo = ({ isLoggedIn }) => {
         }
     }
 
-    const handleToggleStatus = (itemId) => {
-        console.log(itemId)
-        const updatedTodo = todo.map((item) => {
-            if (item._id === itemId) {
-                return {
-                    ...item,
-                    completed: !item.completed
-                };
-            }
-            return item;
-        });
-        setTodo(updatedTodo);
-    };
 
     const handleFormOpen = () => {
         setIsFormOpen(true);
@@ -133,6 +121,30 @@ const Todo = ({ isLoggedIn }) => {
             [name]: value
         }));
     };
+
+    const handleDeletion = async (itemId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/todo/delete/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: token
+                }
+            });
+
+            if (response.ok) {
+                alert("Todo Deleted")
+                fetchData();
+
+            } else {
+                console.error('Failed to delete the Todo');
+            }
+        } catch (error) {
+            console.error('Error deleting the Todo:', error);
+        }
+    };
+
 
     return (
         <div>
@@ -204,8 +216,7 @@ const Todo = ({ isLoggedIn }) => {
                                     <h3 className="todo__name">Title: {item.data.title}</h3>
                                     <p className="todo__description">{item.data.description}</p>
                                     <p className="todo__description">Priority: {item.data.priority}</p>
-                                    <button onClick={() => handleToggleStatus(item._id)}>
-                                        {/* {item.data.completed ? "Mark as Pending" : "Mark as Completed"} */}
+                                    <button onClick={() => handleDeletion(item._id)}>
                                         Delete
                                     </button>
                                 </div>
