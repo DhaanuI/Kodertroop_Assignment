@@ -5,6 +5,8 @@ const SigninForm = ({ onLoginSuccess, updateLoggedInStatus, isLoggedIn, handleLo
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    let url = "https://perfect-shirt-seal.cyclic.app/"
+
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     };
@@ -22,7 +24,7 @@ const SigninForm = ({ onLoginSuccess, updateLoggedInStatus, isLoggedIn, handleLo
         };
 
         try {
-            const response = await fetch('http://localhost:8080/users/login', {
+            const response = await fetch(`${url}users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

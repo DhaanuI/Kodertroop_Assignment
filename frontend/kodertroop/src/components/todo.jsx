@@ -20,15 +20,16 @@ const Todo = ({ isLoggedIn }) => {
 
 
     useEffect(() => {
+        let url = "https://perfect-shirt-seal.cyclic.app/"
         const fetchSearchResults = async () => {
             const id = localStorage.getItem('id')
-            let url;
+            let url1;
             if (searchQuery == "") {
-                url = "http://localhost:8080/todo"
+                url1 = `${url}todo`
             }
-            else url = `http://localhost:8080/todo/search?query=${searchQuery}&userID=${id}`
+            else url1 =`${url}todo/search?query=${searchQuery}&userID=${id}`
             try {
-                const response = await fetch(url, {
+                const response = await fetch(url1, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -51,9 +52,12 @@ const Todo = ({ isLoggedIn }) => {
         }
     }, [searchQuery]);
 
+    let url = "https://perfect-shirt-seal.cyclic.app/"
+
+
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:8080/todo', {
+            const response = await fetch(`${url}todo`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +96,7 @@ const Todo = ({ isLoggedIn }) => {
             return alert("Please fill all the fields")
         }
         try {
-            const response = await fetch('http://localhost:8080/todo/add', {
+            const response = await fetch(`${url}todo/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,7 +129,7 @@ const Todo = ({ isLoggedIn }) => {
     const handleDeletion = async (itemId) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/todo/delete/${itemId}`, {
+            const response = await fetch(`${url}todo/delete/${itemId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

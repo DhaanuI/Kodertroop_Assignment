@@ -6,6 +6,8 @@ const SignupForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    let url = "https://perfect-shirt-seal.cyclic.app/"
+
     const handleNameChange = (e) => {
         setName(e.target.value);
     };
@@ -29,7 +31,7 @@ const SignupForm = () => {
 
         console.log(user)
         try {
-            const response = await fetch('http://localhost:8080/users/register', {
+            const response = await fetch(`${url}users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -38,7 +40,7 @@ const SignupForm = () => {
             });
 
             let data = await response.json()
-            
+
             alert(data.message)
             setName('');
             setEmail('');
