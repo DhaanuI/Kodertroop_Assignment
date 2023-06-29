@@ -2,7 +2,7 @@ const express = require("express");
 const todoRoute = express.Router();
 todoRoute.use(express.json());
 
-const { TodoModel } = require("../model/todomodel");
+const { TodoModel } = require("../model/TodoModel");
 const { authenticate } = require("../middleware/authenticate.middleware");
 
 todoRoute.use(authenticate);
