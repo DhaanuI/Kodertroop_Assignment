@@ -51,7 +51,7 @@ const Navbar = ({ updateLoggedInStatus }) => {
             </button>
           )}
           {isLoggedIn && (
-            <h1></h1>
+            <h1>Welcome, {localStorage.getItem("name")}</h1>
           )}
           {isLoggedIn && (
             <button onClick={handleLogout} className="navbar__button">
