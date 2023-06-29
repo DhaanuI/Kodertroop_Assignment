@@ -9,18 +9,18 @@ const Navbar = ({ updateLoggedInStatus }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSignupClick = () => {
-    setShowSignup(true);
+    setShowSignup((prev) => !prev);
     setShowSignin(false);
   };
 
   const handleSigninClick = () => {
     setShowSignup(false);
-    setShowSignin(true);
+    setShowSignin((prev) => !prev);
   };
 
   const handleLogout = () => {
     localStorage.clear();
-    setIsLoggedIn(false);
+    setIsLoggedIn((prev) => !prev);
     setShowSignup(false);
     setShowSignin(false);
 
@@ -49,6 +49,9 @@ const Navbar = ({ updateLoggedInStatus }) => {
             <button onClick={handleSigninClick} className="navbar__button">
               Log In
             </button>
+          )}
+          {isLoggedIn && (
+            <h1></h1>
           )}
           {isLoggedIn && (
             <button onClick={handleLogout} className="navbar__button">

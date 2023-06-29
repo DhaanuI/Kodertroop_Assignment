@@ -8,31 +8,143 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 10px;
-    margin-bottom: 10px;
+
     background-color: #f9f9f9;
-    margin:auto;
+    margin: auto;
+    margin-bottom: 20px;
+    width: 50%
 }
 
-.todo__card button{
-    margin-right:20px
+.todo__card button {
+    margin-right: 20px;
+    margin-bottom: 5px;
 }
 
-.todo__details{
+.todo__details {
     display: flex;
+    margin-bottom: 5px;
+    justify-content: space-between;
 }
 
 
 .todo__name {
     font-size: 18px;
     margin-bottom: 5px;
-    margin-right:20px
+    margin-right: 20px
 }
 
 .todo__description {
     margin-bottom: 5px;
-    margin-right:20px
+    margin-right: 20px
 }
 
-h1{
+h1 {
     text-align: center;
+}
+
+.searching {
+    text-align: center;
+    margin-bottom: 20px
+}
+
+.add {
+    text-align: center;
+    margin-bottom: 20px
+}
+
+.todo__details button {
+    background-color: rgb(236, 55, 55);
+    border: none;
+    color: white;
+    font-size: medium;
+}
+
+
+.todo__details button:hover {
+    background-color: white;
+    color: red
+}
+
+img {
+    margin-left: 380px
+}
+
+
+.add {
+    margin-top: 20px;
+}
+
+.add button {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.add button:hover {
+    background-color: darkblue;
+}
+
+
+.todo__form {
+    position: fixed;
+    left: 40%;
+    top: 30%;
+  
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo__form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.todo__form h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.todo__form label {
+    margin-bottom: 5px;
+}
+
+.todo__form input,
+.todo__form select {
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.todo__form button[type="submit"],
+.todo__form button[type="button"] {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    width: 50%;
+    margin: 0 auto;
+    display: block;
+}
+
+.todo__form button[type="submit"] {
+    background-color: green;
+    color: white;
+}
+
+.todo__form button[type="submit"]:hover {
+    background-color: darkgreen;
+}
+
+.todo__form button[type="button"] {
+    background-color: red;
+    color: white;
+}
+
+.todo__form button[type="button"]:hover {
+    background-color: darkred;
 }
