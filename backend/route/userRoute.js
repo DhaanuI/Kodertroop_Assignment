@@ -15,7 +15,7 @@ userRoute.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
     const userFound = await UserModel.findOne({ email });
     if (userFound) {
-        res.status(409)({ "message": "Already User registered" });
+        res.status(409).send({ "message": "Already User registered" });
     }
     else {
         try {
@@ -28,7 +28,7 @@ userRoute.post("/register", async (req, res) => {
             });
         }
         catch (err) {
-            res.status(500)({ "ERROR": err });
+            res.status(500).send({ "ERROR": err });
         }
     }
 })
@@ -45,7 +45,13 @@ userRoute.post("/login", async (req, res) => {
             if (result) {
                 var token = jwt.sign({ userID: data._id }, process.env.key);
                 var refreshtoken = jwt.sign({ userID: data._id }, process.env.key, { expiresIn: 60 * 1000 });
-                res.status(201).send({ "message": "Validation done", "token": token, "refresh": refreshtoken })
+                res.status(201).send({
+                    "message": "Validation done",
+                    "token": token,
+                    "refresh": refreshtoken,
+                    "id":data._id,
+                    "name": data.name
+                })
             }
             else {
                 res.status(401).send({ "message": "INVALID credentials" });
@@ -53,7 +59,7 @@ userRoute.post("/login", async (req, res) => {
         });
     }
     catch (err) {
-        res.status(500)({ "ERROR": err });
+        res.status(500).send({ "ERROR": err });
     }
 })
 

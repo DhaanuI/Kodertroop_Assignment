@@ -7,13 +7,17 @@ const { authenticate } = require("../middleware/authenticate.middleware");
 
 todoRoute.use(authenticate);
 
+// usage of REDIS and ELASTIC SEARCH
 const { redisClient } = require("../config/db")
 const { elasticClient } = require("../elastic")
 
 
+
+// get the TODOS from Elastic Cloud
 todoRoute.get("/", async (req, res) => {
     try {
         //  const data = await TodoModel.find({ userID: req.body.userID });
+
         const result = await elasticClient.search({
             index: "tasks",
             body: {
@@ -34,17 +38,27 @@ todoRoute.get("/", async (req, res) => {
             }
 
             const parsedRedisTasks = redisTasks.map(task => JSON.parse(task));
-
-            console.log(parsedRedisTasks)
         })
 
-        res.status(200).send({ "Todos": result });
+
+        const hits = result.hits.hits;
+
+        const items = hits.map(item => ({
+            _id: item._id,
+            data: item._source
+        }));
+
+
+        res.status(200).send({ "Todos": items });
     }
     catch (err) {
+        console.log(err)
         res.status(404).send({ "error": err });
     }
 })
 
+
+// store data in all 3 Mongodb, redis, elastic cloud
 todoRoute.post("/add", async (req, res) => {
     try {
         // storing in Mongoose
@@ -75,6 +89,8 @@ todoRoute.post("/add", async (req, res) => {
 
 })
 
+
+
 todoRoute.patch("/update/:id", async (req, res) => {
     const ID = req.params.id;
     const payload = req.body;
@@ -96,28 +112,18 @@ todoRoute.patch("/update/:id", async (req, res) => {
     }
 })
 
+
+// delete from elastic cloud and redis
 todoRoute.delete("/delete/:id", async (req, res) => {
-    const ID = req.params.id;
-    const data = await TodoModel.findOne({ _id: ID });
-    const userid_in_req = req.body.userID;
-    const userid_in_doc = data.userID.toString();
     try {
-        if (userid_in_req !== userid_in_doc) {
-            res.status(401).send({ "message": "Oops, You're NOT Authorized" });
-        }
-        else {
-            await TodoModel.findByIdAndDelete({ _id: ID })
+        const result = await elasticClient.delete({
+            index: "tasks",
+            id: req.params.id
+        });
 
-            const result = await elasticClient.delete({
-                index: "tasks",
-                id: req.body.id,
-            });
+        const deleteResult = await redisClient.lrem("tasks", 0, JSON.stringify({ id: req.params.id }));
 
-            const deleteResult = await redisClient.lrem("tasks", 0, JSON.stringify({ id: ID }));
-
-
-            res.send({ "message": "Todo has been deleted" })
-        }
+        res.send({ "message": "Todo has been deleted" })
     }
     catch (err) {
         res.status(404).send({ "message": "Bad request 404" });
@@ -149,9 +155,14 @@ todoRoute.get("/search", async (req, res) => {
             }
         });
 
-        const searchResults = result.hits.hits.map(hit => hit._source);
+        const hits = result.hits.hits;
 
-        res.json(searchResults);
+        const items = hits.map(item => ({
+            _id: item._id,
+            data: item._source
+        }));
+
+        res.send({ "Todos": items });
     } catch (error) {
         console.error("Error performing search:", error);
         res.status(500).json({ error: "An error occurred during the search." });
